@@ -1,9 +1,11 @@
+import re
 import time
 import logging
 import random
+
+from PIL import Image
 from slack_bolt import App
 from slack_sdk.web import WebClient
-
 from rgbmatrix import graphics, RGBMatrix, RGBMatrixOptions
 
 # TODO -
@@ -29,17 +31,32 @@ def rand_color(min=0, max=255):
              rand_single_color(min, max))
     return color
 
+def parse_emoji(text):
+    match = re.search(":(.*?):", text)
+
+    if match:
+        emoji = match.group(1)
+        return emoji
+
 @app.event("message")
 def message(event, client):
     """Display the onboarding welcome message after receiving a message
     that contains "start".
     """
     text = event.get("text")
+    emoji = parse_emoji(text)
+
+    if emoji:
+        emoji_image = Image.open(f"images/{emoji}.png").convert('RGB')
+
+        # Remove emoji text from string
+        text = text.replace(f":{emoji}:", "")
 
     options = RGBMatrixOptions()
-    options.cols = 64
+    canvas_width = 64
+    options.cols = canvas_width
     options.hardware_mapping = 'adafruit-hat'
-    # options.pwm_lsb_nanoseconds = 280
+    options.pwm_lsb_nanoseconds = 280
 
     matrix = RGBMatrix(options = options)
 
@@ -51,15 +68,20 @@ def message(event, client):
     my_text = text
 
     duration = 1800 # 30 mins
-    duration = 10 # 10 seconds only for debug
+    #duration = 10 # 10 seconds only for debug
 
     start_time = time.time()
     while True:
         offscreen_canvas.Clear()
-        len = graphics.DrawText(offscreen_canvas, font, pos, 20, textColor, my_text)
-        pos -= 1
-        if (pos + len < 0):
-            pos = offscreen_canvas.width
+        text_width = graphics.DrawText(offscreen_canvas, font, -pos, 20, textColor, my_text)
+        pos += 1
+
+        if (pos > (canvas_width) + (text_width)):
+            pos = -canvas_width
+
+        if emoji:
+            offscreen_canvas.SetImage(emoji_image, -pos + (text_width + 12), 4,
+                                      unsafe=False)
 
         time.sleep(0.05)
         offscreen_canvas = matrix.SwapOnVSync(offscreen_canvas)
