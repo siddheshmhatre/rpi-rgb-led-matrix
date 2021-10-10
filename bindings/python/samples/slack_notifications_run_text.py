@@ -12,7 +12,6 @@ from rgbmatrix import graphics, RGBMatrix, RGBMatrixOptions
 #   https://github.com/ryanhagerty/mister-moji
 #   https://www.mediacurrent.com/blog/mister-moji-slackbot-raspberry-pi-led-matrix-emoji-party
 #   https://github.com/ryanhagerty/unicode-slack-emoji-conversion
-# 4. Center the message
 # 5. Write a script that starts the server on start-up
 # 6. Ensure security through vpn or evaluate ngrok if safe
 # 7. Change Pi-username
@@ -47,7 +46,7 @@ def message(event, client):
     start_time = time.time()
     while True:
         offscreen_canvas.Clear()
-        len = graphics.DrawText(offscreen_canvas, font, pos, 10, textColor, my_text)
+        len = graphics.DrawText(offscreen_canvas, font, pos, 20, textColor, my_text)
         pos -= 1
         if (pos + len < 0):
             pos = offscreen_canvas.width
