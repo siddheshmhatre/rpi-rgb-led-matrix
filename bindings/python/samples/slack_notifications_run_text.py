@@ -2,7 +2,6 @@ import time
 import logging
 from slack_bolt import App
 from slack_sdk.web import WebClient
-from onboarding_tutorial import OnboardingTutorial
 
 from rgbmatrix import graphics, RGBMatrix, RGBMatrixOptions
 
