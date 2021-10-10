@@ -1,5 +1,6 @@
 import time
 import logging
+import random
 from slack_bolt import App
 from slack_sdk.web import WebClient
 
@@ -19,6 +20,15 @@ from rgbmatrix import graphics, RGBMatrix, RGBMatrixOptions
 # Initialize a Bolt for Python app
 app = App()
 
+def rand_single_color(min=0, max=255):
+    return random.randint(min, max)
+
+def rand_color(min=0, max=255):
+    color = (rand_single_color(min, max),
+             rand_single_color(min, max),
+             rand_single_color(min, max))
+    return color
+
 @app.event("message")
 def message(event, client):
     """Display the onboarding welcome message after receiving a message
@@ -36,7 +46,7 @@ def message(event, client):
     offscreen_canvas = matrix.CreateFrameCanvas()
     font = graphics.Font()
     font.LoadFont("../../../fonts/7x13.bdf")
-    textColor = graphics.Color(255, 255, 0)
+    textColor = graphics.Color(*rand_color())
     pos = offscreen_canvas.width
     my_text = text
 
