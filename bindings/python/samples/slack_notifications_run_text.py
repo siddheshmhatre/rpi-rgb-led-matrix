@@ -7,7 +7,6 @@ from rgbmatrix import graphics, RGBMatrix, RGBMatrixOptions
 
 # TODO -
 # 1. Make sure message is displayed at a particular time
-# 2. Message is displayed only for an hour or so
 # 3. Emoji support
 #   https://github.com/ryanhagerty/mister-moji
 #   https://www.mediacurrent.com/blog/mister-moji-slackbot-raspberry-pi-led-matrix-emoji-party
@@ -25,13 +24,12 @@ def message(event, client):
     """Display the onboarding welcome message after receiving a message
     that contains "start".
     """
-    channel_id = event.get("channel")
-    user_id = event.get("user")
     text = event.get("text")
 
     options = RGBMatrixOptions()
     options.cols = 64
     options.hardware_mapping = 'adafruit-hat'
+    # options.pwm_lsb_nanoseconds = 280
 
     matrix = RGBMatrix(options = options)
 
@@ -42,6 +40,8 @@ def message(event, client):
     pos = offscreen_canvas.width
     my_text = text
 
+    duration = 1800 # 30 mins
+    duration = 10 # 10 seconds only for debug
 
     start_time = time.time()
     while True:
@@ -56,7 +56,7 @@ def message(event, client):
 
         time_elapsed = time.time() - start_time
 
-        if time_elapsed > 20:
+        if time_elapsed > duration:
             break
 
 if __name__ == "__main__":
