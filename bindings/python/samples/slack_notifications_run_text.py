@@ -10,14 +10,11 @@ from rgbmatrix import graphics, RGBMatrix, RGBMatrixOptions
 
 # TODO -
 # 1. Make sure message is displayed at a particular time
-# 3. Emoji support
-#   https://github.com/ryanhagerty/mister-moji
-#   https://www.mediacurrent.com/blog/mister-moji-slackbot-raspberry-pi-led-matrix-emoji-party
-#   https://github.com/ryanhagerty/unicode-slack-emoji-conversion
 # 5. Write a script that starts the server on start-up
 # 6. Ensure security through vpn or evaluate ngrok if safe
 # 7. Change Pi-username
 # 8. 3D print casing
+# 9. Fine tuning to remove flickering https://github.com/hzeller/rpi-rgb-led-matrix#troubleshooting
 
 # Initialize a Bolt for Python app
 app = App()
