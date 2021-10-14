@@ -12,28 +12,28 @@ def parse_emoji(text):
         return emoji
 
 def return_text_and_emojis(text):
-	# Create list to return
-	text_and_emojis = []
+        # Create list to return
+        text_and_emojis = []
 
-	index = 0
-	sub_text = ''
+        index = 0
+        sub_text = ''
 
-	while index < len(text):
-		char = text[index]
-		if char == '[':
-			if len(sub_text != 0):
-				text_and_emojis.append((TEXT, sub_text))
-				sub_text = ''
-			emoji_name = ''
-			while char != ']':
-				index += 1
-				emoji_name += char
-			emoji_image = Image.open(f"images/{emoji_name}.png").convert('RGB')
-			text_and_emojis.append((EMOJI, emoji_image))
-		else:
-			sub_text += char
+        while index < len(text):
+                char = text[index]
+                if char == '[':
+                        if len(sub_text != 0):
+                                text_and_emojis.append((TEXT, sub_text))
+                                sub_text = ''
+                        emoji_name = ''
+                        while char != ']':
+                                index += 1
+                                emoji_name += char
+                        emoji_image = Image.open(f"images/{emoji_name}.png").convert('RGB')
+                        text_and_emojis.append((EMOJI, emoji_image))
+                else:
+                        sub_text += char
 
-	if len(sub_text != 0):
-		text_and_emojis.append(('text', sub_text))
+        if len(sub_text != 0):
+                text_and_emojis.append(('text', sub_text))
 
-	return text_and_emojis
+        return text_and_emojis
