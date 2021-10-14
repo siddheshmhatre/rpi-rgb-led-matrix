@@ -1,12 +1,11 @@
-import re
 import time
 import logging
 import random
 
-from PIL import Image
 from slack_bolt import App
 from slack_sdk.web import WebClient
 from rgbmatrix import graphics, RGBMatrix, RGBMatrixOptions
+from emoji_helpers import return_text_and_emojis, TEXT, EMOJI
 
 # TODO -
 # 1. Make sure message is displayed at a particular time
@@ -28,26 +27,12 @@ def rand_color(min=0, max=255):
              rand_single_color(min, max))
     return color
 
-def parse_emoji(text):
-    match = re.search(":(.*?):", text)
-
-    if match:
-        emoji = match.group(1)
-        return emoji
-
 @app.event("message")
 def message(event, client):
     """Display the onboarding welcome message after receiving a message
     that contains "start".
     """
     text = event.get("text")
-    emoji = parse_emoji(text)
-
-    if emoji:
-        emoji_image = Image.open(f"images/{emoji}.png").convert('RGB')
-
-        # Remove emoji text from string
-        text = text.replace(f":{emoji}:", "")
 
     options = RGBMatrixOptions()
     canvas_width = 64
@@ -64,21 +49,26 @@ def message(event, client):
     pos = offscreen_canvas.width
     my_text = text
 
-    duration = 1800 # 30 mins
-    #duration = 10 # 10 seconds only for debug
+    # duration = 1800 # 30 mins
+    duration = 10 # 10 seconds only for debug
+
+    text_and_emojis = return_text_and_emojis(text)
 
     start_time = time.time()
     while True:
         offscreen_canvas.Clear()
-        text_width = graphics.DrawText(offscreen_canvas, font, -pos, 20, textColor, my_text)
-        pos += 1
+        for item in text_and_emojis:
+            if item[0] == TEXT:
 
-        if (pos > (canvas_width) + (text_width)):
-            pos = -canvas_width
+                text_width = graphics.DrawText(offscreen_canvas, font, -pos, 20, textColor, item[1])
+                pos += 1
 
-        if emoji:
-            offscreen_canvas.SetImage(emoji_image, -pos + (text_width + 12), 4,
-                                      unsafe=False)
+                if (pos > (canvas_width) + (text_width)):
+                    pos = -canvas_width
+
+            if item[1] == EMOJI:
+                offscreen_canvas.SetImage(item[1], -pos + (text_width + 12), 4,
+                                        unsafe=False)
 
         time.sleep(0.05)
         offscreen_canvas = matrix.SwapOnVSync(offscreen_canvas)
