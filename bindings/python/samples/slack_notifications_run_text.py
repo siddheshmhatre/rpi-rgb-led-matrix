@@ -79,7 +79,7 @@ def message(event, client):
         if pos > total_width + canvas_width:
             pos = initial_pos
 
-        time.sleep(0.2)
+        time.sleep(0.15)
         offscreen_canvas = matrix.SwapOnVSync(offscreen_canvas)
 
         time_elapsed = time.time() - start_time
