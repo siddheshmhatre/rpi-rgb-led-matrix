@@ -46,31 +46,40 @@ def message(event, client):
     font = graphics.Font()
     font.LoadFont("../../../fonts/7x13.bdf")
     textColor = graphics.Color(*rand_color())
-    pos = offscreen_canvas.width
+    initial_pos = -canvas_width
+    pos = initial_pos
     my_text = text
 
     # duration = 1800 # 30 mins
-    duration = 10 # 10 seconds only for debug
+    duration = 15 # 10 seconds only for debug
 
     text_and_emojis = return_text_and_emojis(text)
 
     start_time = time.time()
+    total_width = -1
     while True:
         offscreen_canvas.Clear()
+        delta = 0
         for item in text_and_emojis:
             if item[0] == TEXT:
+                text_width = graphics.DrawText(offscreen_canvas, font, -pos +
+                                               delta, 20, textColor, item[1])
+                delta += text_width
 
-                text_width = graphics.DrawText(offscreen_canvas, font, -pos, 20, textColor, item[1])
-                pos += 1
+            elif item[0] == EMOJI:
+                offscreen_canvas.SetImage(item[1], -pos + delta, 4,
+                                          unsafe=False)
+                delta += item[1].size[1] # Each emoji is 32 x 32 pix
 
-                if (pos > (canvas_width) + (text_width)):
-                    pos = -canvas_width
+            pos += 1
 
-            if item[1] == EMOJI:
-                offscreen_canvas.SetImage(item[1], -pos + (text_width + 12), 4,
-                                        unsafe=False)
+        if total_width < 0:
+            total_width = delta
 
-        time.sleep(0.05)
+        if pos > total_width + canvas_width:
+            pos = initial_pos
+
+        time.sleep(0.2)
         offscreen_canvas = matrix.SwapOnVSync(offscreen_canvas)
 
         time_elapsed = time.time() - start_time

@@ -20,20 +20,25 @@ def return_text_and_emojis(text):
 
         while index < len(text):
                 char = text[index]
-                if char == '[':
-                        if len(sub_text != 0):
+                if char == ':':
+                        if len(sub_text) != 0:
                                 text_and_emojis.append((TEXT, sub_text))
                                 sub_text = ''
                         emoji_name = ''
-                        while char != ']':
+                        index += 1
+                        char = text[index]
+                        while char != ':':
                                 index += 1
                                 emoji_name += char
+                                char = text[index]
+                        index += 1
                         emoji_image = Image.open(f"images/{emoji_name}.png").convert('RGB')
                         text_and_emojis.append((EMOJI, emoji_image))
                 else:
                         sub_text += char
+                        index += 1
 
-        if len(sub_text != 0):
+        if len(sub_text) != 0:
                 text_and_emojis.append(('text', sub_text))
 
         return text_and_emojis
