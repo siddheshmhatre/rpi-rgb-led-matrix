@@ -83,6 +83,8 @@ def display_message(message_queue, matrix, font, canvas_width):
                 if num_times >= total_num_times:
                     break
 
+        time.sleep(5)
+
 if __name__ == "__main__":
     logger = logging.getLogger()
     logger.setLevel(logging.DEBUG)
