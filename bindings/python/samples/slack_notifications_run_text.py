@@ -50,9 +50,8 @@ def message(event, client):
     pos = initial_pos
     my_text = text
 
-    # duration = 1800 # 30 mins
-    duration = 15 # 10 seconds only for debug
-
+    total_num_times = 3
+    num_times = 0
     text_and_emojis = return_text_and_emojis(text)
 
     start_time = time.time()
@@ -78,13 +77,12 @@ def message(event, client):
 
         if pos > total_width + canvas_width:
             pos = initial_pos
+            num_times += 1
 
         time.sleep(0.15)
         offscreen_canvas = matrix.SwapOnVSync(offscreen_canvas)
 
-        time_elapsed = time.time() - start_time
-
-        if time_elapsed > duration:
+        if num_times >= total_num_times:
             break
 
 if __name__ == "__main__":
