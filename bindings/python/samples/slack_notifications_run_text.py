@@ -39,6 +39,7 @@ def message(event, client):
     text = event.get("text")
     text_and_emojis = return_text_and_emojis(text)
     message_queue.put(text_and_emojis)
+    time.sleep(10)
 
 def display_message(message_queue, matrix, font, canvas_width):
     while True:
