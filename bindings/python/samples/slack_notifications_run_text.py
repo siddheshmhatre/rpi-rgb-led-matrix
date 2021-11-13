@@ -41,9 +41,8 @@ def message(event, client):
     message_queue.put(text_and_emojis)
     time.sleep(10)
 
-def display_message(message_queue, matrix, font, canvas_width):
+def display_message(message_queue, matrix, font, canvas_width, offscreen_canvas):
     while True:
-        offscreen_canvas = matrix.CreateFrameCanvas()
         textColor = graphics.Color(*rand_color())
         initial_pos = -canvas_width
         pos = initial_pos
@@ -52,8 +51,10 @@ def display_message(message_queue, matrix, font, canvas_width):
         num_times = 0
 
         if not message_queue.empty():
-            text_and_emojis = message_queue.get()
+            print (f"Message queue size BEFORE {message_queue.qsize()}")
 
+            text_and_emojis = message_queue.get()
+            print (f"Message queue size AFTER {message_queue.qsize()}")
             total_width = -1
             while True:
                 offscreen_canvas.Clear()
@@ -84,7 +85,7 @@ def display_message(message_queue, matrix, font, canvas_width):
                 if num_times >= total_num_times:
                     break
 
-        time.sleep(10)
+        time.sleep(1)
 
 if __name__ == "__main__":
     logger = logging.getLogger()
@@ -100,7 +101,11 @@ if __name__ == "__main__":
     font.LoadFont("../../../fonts/7x13.bdf")
 
     matrix = RGBMatrix(options = options)
+    offscreen_canvas = matrix.CreateFrameCanvas()
 
-    display_thread = Thread(target = display_message, args =(message_queue, matrix, font, canvas_width ))
+    display_thread = Thread(target = display_message, args =(message_queue,
+                                                             matrix, font,
+                                                             canvas_width,
+                                                             offscreen_canvas))
     display_thread.start()
     app.start(3000)
