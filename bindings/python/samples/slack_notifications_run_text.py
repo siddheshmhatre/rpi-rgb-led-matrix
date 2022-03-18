@@ -20,6 +20,7 @@ from emoji_helpers import return_text_and_emojis, TEXT, EMOJI
 # Initialize a Bolt for Python app
 app = App()
 message_queue = Queue()
+users_to_notify = []
 
 def rand_single_color(min=0, max=255):
     return random.randint(min, max)
@@ -39,6 +40,17 @@ def message(event, client):
     text = event.get("text")
     text_and_emojis = return_text_and_emojis(text)
     message_queue.put(text_and_emojis)
+
+    user_sent = event.get("user")
+    global users_to_notify
+
+    for user in users_to_notify:
+        if user != user_sent:
+            result = client.chat_postMessage(
+                        channel=user,
+                        text="You have a new message"
+                    )
+            logger.info(result)
     time.sleep(10)
 
 def display_message(message_queue, matrix, font, canvas_width, offscreen_canvas):
