@@ -42,14 +42,17 @@ def message(event, client):
     text_and_emojis = return_text_and_emojis(text)
     message_queue.put(text_and_emojis)
 
-    user_sent = event.get("user")
+    userid = event.get("user")
+    userinfo = client.users_info(user=userid)
+    logger.info(userinfo)
+    username = userinfo.get('user').get('real_name')
     global users_to_notify
 
     for user in users_to_notify:
-        if user != user_sent:
+        if user != userid:
             result = client.chat_postMessage(
                         channel=user,
-                        text="You have a new message"
+                        text=f"You have a new message from {username}"
                     )
             logger.info(result)
     time.sleep(10)
@@ -64,10 +67,10 @@ def display_message(message_queue, matrix, font, canvas_width, offscreen_canvas)
         num_times = 0
 
         if not message_queue.empty():
-            print (f"Message queue size BEFORE {message_queue.qsize()}")
+            logger.info(f"Message queue size BEFORE {message_queue.qsize()}")
 
             text_and_emojis = message_queue.get()
-            print (f"Message queue size AFTER {message_queue.qsize()}")
+            logger.info(f"Message queue size AFTER {message_queue.qsize()}")
             total_width = -1
             while True:
                 offscreen_canvas.Clear()
