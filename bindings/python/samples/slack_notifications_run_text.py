@@ -37,6 +37,7 @@ def message(event, client):
     that contains "start".
     """
     global message_queue
+    logger.info(event)
     text = event.get("text")
     text_and_emojis = return_text_and_emojis(text)
     message_queue.put(text_and_emojis)
@@ -97,7 +98,7 @@ def display_message(message_queue, matrix, font, canvas_width, offscreen_canvas)
                 if num_times >= total_num_times:
                     break
 
-        time.sleep(1)
+        time.sleep(5)
 
 if __name__ == "__main__":
     logger = logging.getLogger()
